@@ -14,8 +14,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import org.chromium.base.ContextUtils;
 import org.chromium.base.annotations.CalledByNative;
@@ -36,79 +38,14 @@ import org.chromium.chrome.browser.util.PackageUtils;
 import java.lang.System;
 
 public class BraveAdsCustomNotificationDialog {
-
-    private static String SHOULD_SHOW_ONBOARDING_DIALOG_VIEW_COUNTER = "should_show_onboarding_dialog_view_counter";
-    private static String SHOULD_SHOW_ONBOARDING_DIALOG = "should_show_onboarding_dialog";
-
-    private static final long TWENTY_FOUR_HOURS = 86_400_000;
-    private static final long MOMENT_LATER = 2_500;
-
-    public static boolean shouldShowNewUserDialog(Context context) {
-        boolean shouldShow =
-          shouldShowOnboardingDialog()
-          && PackageUtils.isFirstInstall(context)
-          && !BraveAdsNativeHelper.nativeIsBraveAdsEnabled(Profile.getLastUsedRegularProfile())
-          && !PrefServiceBridge.getInstance().getBoolean(BravePref.BRAVE_REWARDS_ENABLED)
-          && hasElapsed24Hours(context)
-          && ChromeFeatureList.isEnabled(BraveFeatureList.BRAVE_REWARDS);
-
-        boolean shouldShowForViewCount = shouldShowForViewCount();
-        if (shouldShow) updateViewCount();
-
-        return shouldShow && shouldShowForViewCount;
-    }
-
-    public static boolean shouldShowNewUserDialogIfRewardsIsSwitchedOff(Context context) {
-        boolean shouldShow =
-          shouldShowOnboardingDialog()
-          && !PackageUtils.isFirstInstall(context)
-          && !BraveAdsNativeHelper.nativeIsBraveAdsEnabled(Profile.getLastUsedRegularProfile())
-          && !PrefServiceBridge.getInstance().getBoolean(BravePref.BRAVE_REWARDS_ENABLED)
-          && ChromeFeatureList.isEnabled(BraveFeatureList.BRAVE_REWARDS);
-
-        boolean shouldShowForViewCount = shouldShowForViewCount();
-        if (shouldShow) updateViewCount();
-
-        return shouldShow && shouldShowForViewCount;
-    }
-
-    public static boolean shouldShowExistingUserDialog(Context context) {
-        boolean shouldShow =
-          shouldShowOnboardingDialog()
-          && !PackageUtils.isFirstInstall(context)
-          && !BraveAdsNativeHelper.nativeIsBraveAdsEnabled(Profile.getLastUsedRegularProfile())
-          && PrefServiceBridge.getInstance().getBoolean(BravePref.BRAVE_REWARDS_ENABLED)
-          && BraveAdsNativeHelper.nativeIsLocaleValid(Profile.getLastUsedRegularProfile())
-          && ChromeFeatureList.isEnabled(BraveFeatureList.BRAVE_REWARDS);
-
-        boolean shouldShowForViewCount = shouldShowForViewCount();
-        if (shouldShow) updateViewCount();
-
-        return shouldShow && shouldShowForViewCount;
-    }
-
     @CalledByNative
-    public static void enqueueOnboardingNotificationNative() {
-        enqueueOnboardingNotification(ContextUtils.getApplicationContext());
+    private static void displayAdsCustomNotification(final String notificationId,
+            final String origin, final String title, final String body) {
+      Log.i("albert", "Called display ads custom notification");
+      Toast.makeText(ContextUtils.getApplicationContext(), "title: " + title + " body: " + body, Toast.LENGTH_LONG);
     }
 
-    @CalledByNative
-    public static boolean showAdsInBackground() {
-        return BraveRewardsPreferences.getPrefAdsInBackgroundEnabled();
-    }
-
-    private static void enqueueOnboardingNotification(Context context) {
-        if(!OnboardingPrefManager.getInstance().isOnboardingNotificationShown()) {
-            AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            Intent intent = new Intent(context, BraveOnboardingNotification.class);
-            am.set(
-                AlarmManager.RTC_WAKEUP,
-                System.currentTimeMillis() + MOMENT_LATER,
-                PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-            );
-        }
-    }
-
+    /*
     public static void showNewUserDialog(Context context) {
         AlertDialog alertDialog = new AlertDialog.Builder(context, R.style.BraveDialogTheme)
         .setView(R.layout.brave_ads_new_user_dialog_layout)
@@ -161,41 +98,5 @@ public class BraveAdsCustomNotificationDialog {
             }
         });
     }
-
-    private static boolean hasElapsed24Hours(Context context) {
-        boolean result = false;
-        try {
-            result = System.currentTimeMillis() >= context.getPackageManager().getPackageInfo(context.getPackageName(), 0).firstInstallTime + TWENTY_FOUR_HOURS;
-        } catch (NameNotFoundException e) {}
-        return result;
-    }
-
-    private static boolean shouldShowForViewCount() {
-        SharedPreferences sharedPref = ContextUtils.getAppSharedPreferences();
-
-        int viewCount = sharedPref.getInt(SHOULD_SHOW_ONBOARDING_DIALOG_VIEW_COUNTER, 0);
-        return 0 == viewCount || 20 == viewCount || 40 == viewCount;
-    }
-
-    private static void updateViewCount() {
-        SharedPreferences sharedPref = ContextUtils.getAppSharedPreferences();
-        SharedPreferences.Editor editor = sharedPref.edit();
-
-        editor.putInt(SHOULD_SHOW_ONBOARDING_DIALOG_VIEW_COUNTER, sharedPref.getInt(SHOULD_SHOW_ONBOARDING_DIALOG_VIEW_COUNTER, 0) + 1);
-        editor.apply();
-    }
-
-    private static void neverShowOnboardingDialogAgain() {
-        SharedPreferences sharedPref = ContextUtils.getAppSharedPreferences();
-        SharedPreferences.Editor editor = sharedPref.edit();
-
-        editor.putBoolean(SHOULD_SHOW_ONBOARDING_DIALOG, false);
-        editor.apply();
-    }
-
-    private static boolean shouldShowOnboardingDialog() {
-        SharedPreferences sharedPref = ContextUtils.getAppSharedPreferences();
-
-        return sharedPref.getBoolean(SHOULD_SHOW_ONBOARDING_DIALOG, true);
-    }
+    */
 }

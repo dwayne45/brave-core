@@ -26,6 +26,7 @@
 #include "base/android/jni_android.h"
 #include "base/android/jni_array.h"
 #include "base/android/jni_string.h"
+#include "brave/browser/brave_ads/android/jni_headers/BraveAdsCustomNotificationDialog_jni.h"
 using base::android::AttachCurrentThread;
 using base::android::ConvertJavaStringToUTF8;
 using base::android::ConvertJavaStringToUTF16;
@@ -75,10 +76,17 @@ class PassThroughDelegate
 
 NotificationPlatformBridgeBraveCustomNotification::
     NotificationPlatformBridgeBraveCustomNotification(Profile* profile)
-    : profile_(profile) {}
+    : profile_(profile) {
+      /*
+  java_object_.Reset(Java_BraveAdsCustomNotificationDialog_create(
+      AttachCurrentThread(), reinterpret_cast<intptr_t>(this)));
+      */
+}
 
 NotificationPlatformBridgeBraveCustomNotification::
-    ~NotificationPlatformBridgeBraveCustomNotification() = default;
+    ~NotificationPlatformBridgeBraveCustomNotification() {
+//  Java_BraveAdsCustomNotificationDialog_destroy(AttachCurrentThread(), java_object_);
+}
 
 void NotificationPlatformBridgeBraveCustomNotification::Display(
     Profile* profile,
@@ -107,9 +115,6 @@ void NotificationPlatformBridgeBraveCustomNotification::ShowAndroidAdsCustomNoti
 
   JNIEnv* env = AttachCurrentThread();
 
-  base::android::ScopedJavaLocalRef<jstring> j_scope_url =
-      ConvertUTF8ToJavaString(env, origin_url.spec());
-
   base::android::ScopedJavaLocalRef<jstring> j_notification_id =
       ConvertUTF8ToJavaString(env, notification.id());
   base::android::ScopedJavaLocalRef<jstring> j_origin =
@@ -119,20 +124,10 @@ void NotificationPlatformBridgeBraveCustomNotification::ShowAndroidAdsCustomNoti
   base::android::ScopedJavaLocalRef<jstring> body =
       ConvertUTF16ToJavaString(env, notification.message());
 
-  ScopedJavaLocalRef<jintArray> vibration_pattern =
-      base::android::ToJavaIntArray(env, notification.vibration_pattern());
-
-  ScopedJavaLocalRef<jstring> j_profile_id =
-      ConvertUTF8ToJavaString(env, "");
-
-  /*
-  Java_NotificationPlatformBridge_displayNotification(
-      env, java_object_, j_notification_id, j_notification_type, j_origin,
-      j_scope_url, j_profile_id, profile->IsOffTheRecord(), title, body, image,
-      notification_icon, badge, vibration_pattern,
-      notification.timestamp().ToJavaTime(), notification.renotify(),
-      notification.silent(), actions);
-      */
+  Java_BraveAdsCustomNotificationDialog_displayAdsCustomNotification(
+      env, j_notification_id, j_origin,
+      // env, java_object_, j_notification_id, j_origin,
+      title, body);
 }
 
 void NotificationPlatformBridgeBraveCustomNotification::CloseAndroidAdsCustomNotification(
