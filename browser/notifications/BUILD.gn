@@ -2,27 +2,17 @@ source_set("notifications") {
   # Remove when https://github.com/brave/brave-browser/issues/10657 is resolved
   check_includes = false
 
-  if (is_mac || is_linux || is_win) {
-      sources = [
-        "notification_platform_bridge_brave_custom_notification.cc",
-        "notification_platform_bridge_brave_custom_notification.h"
-      ]
+  sources = [
+    "brave_notification_platform_bridge_helper_android.cc",
+    "brave_notification_platform_bridge_helper_android.h",
+    "notification_platform_bridge_brave_custom_notification.cc",
+    "notification_platform_bridge_brave_custom_notification.h"
+  ]
 
-      deps = [
-        "//base",
-        "//brave/components/brave_ads/browser",
-        "//brave/vendor/bat-native-ads",
-        "//skia",
-      ]
-  } else if (is_android) {
-    sources = [
-      "brave_notification_platform_bridge_helper_android.cc",
-      "brave_notification_platform_bridge_helper_android.h",
-    ]
-
-    deps = [
-      "//base",
-      "//chrome/common",
-    ]
-  }
+  deps = [
+    "//base",
+    "//brave/components/brave_ads/browser",
+    "//brave/vendor/bat-native-ads",
+    "//skia",
+  ]
 }

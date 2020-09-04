@@ -2019,15 +2019,10 @@ std::string AdsServiceImpl::LoadDataResourceAndDecompressIfNeeded(
 void AdsServiceImpl::ShowNotification(
     const std::unique_ptr<ads::AdNotificationInfo> info) {
   // Call NotificationPlatformBridgeBraveCustomNotification
-#if defined(OS_WIN) || defined(OS_MACOSX) || defined(OS_LINUX)
   std::unique_ptr<brave_custom_notification::Notification> notification = CreateAdNotification(*info);
   std::unique_ptr<NotificationPlatformBridgeBraveCustomNotification> platform_bridge =
     std::make_unique<NotificationPlatformBridgeBraveCustomNotification>(profile_);
   platform_bridge->Display(profile_, *notification);
-#elif defined(OS_ANDROID)
-  std::unique_ptr<message_center::Notification> notification = CreateMessageCenterAdNotification(*info);
-  display_service_->Display(NotificationHandler::Type::BRAVE_ADS, *notification, /*metadata=*/nullptr);
-#endif
   StartNotificationTimeoutTimer(info->uuid);
 }
 
@@ -2067,16 +2062,7 @@ bool AdsServiceImpl::ShouldShowNotifications() {
 
 void AdsServiceImpl::CloseNotification(
     const std::string& uuid) {
-#if defined(OS_ANDROID)
-  const std::string brave_ads_url_prefix = kBraveAdsUrlPrefix;
-  const GURL service_worker_scope =
-      GURL(brave_ads_url_prefix.substr(0, brave_ads_url_prefix.size() - 1));
-  BraveNotificationPlatformBridgeHelperAndroid::MaybeRegenerateNotification(
-      uuid, service_worker_scope);
-  display_service_->Close(NotificationHandler::Type::BRAVE_ADS, uuid);
-#endif
-
-#if defined(OS_WIN) || defined(OS_MACOSX) || defined(OS_LINUX)
+#if defined(OS_WIN) || defined(OS_MACOSX) || defined(OS_LINUX) || defined(OS_ANDROID)
   std::unique_ptr<NotificationPlatformBridgeBraveCustomNotification> platform_bridge = std::make_unique<NotificationPlatformBridgeBraveCustomNotification>(profile_);
   platform_bridge->Close(profile_, uuid);
 #endif

@@ -18,8 +18,22 @@
 #include "brave/ui/brave_custom_notification/public/cpp/notification.h"
 #include "chrome/browser/browser_process.h"
 #include "chrome/browser/profiles/profile.h"
+#include "chrome/browser/notifications/notification_ui_manager.h"
 #include "content/public/browser/browser_task_traits.h"
 #include "content/public/browser/browser_thread.h"
+
+#if defined(OS_ANDROID)
+#include "base/android/jni_android.h"
+#include "base/android/jni_array.h"
+#include "base/android/jni_string.h"
+using base::android::AttachCurrentThread;
+using base::android::ConvertJavaStringToUTF8;
+using base::android::ConvertJavaStringToUTF16;
+using base::android::ConvertUTF16ToJavaString;
+using base::android::ConvertUTF8ToJavaString;
+using base::android::JavaParamRef;
+using base::android::ScopedJavaLocalRef;
+#endif
 
 namespace {
 
@@ -68,7 +82,7 @@ NotificationPlatformBridgeBraveCustomNotification::
 
 void NotificationPlatformBridgeBraveCustomNotification::Display(
     Profile* profile,
-    const brave_custom_notification::Notification& notification) {
+    brave_custom_notification::Notification& notification) {
   DCHECK_EQ(profile, profile_);
 
   // If there's no delegate, replace it with a PassThroughDelegate so clicks
@@ -76,15 +90,73 @@ void NotificationPlatformBridgeBraveCustomNotification::Display(
   notification.set_delegate(base::WrapRefCounted(
       new PassThroughDelegate(profile_, notification)));
 
+#if defined(OS_WIN) || defined(OS_MACOSX) || defined(OS_LINUX)
   brave_custom_notification::MessagePopupView::Show(notification);
+#elif defined(OS_ANDROID)
+  ShowAndroidAdsCustomNotification(profile, notification);
+#endif
 
   std::unique_ptr<brave_ads::AdsNotificationHandler> handler = std::make_unique<brave_ads::AdsNotificationHandler>(static_cast<content::BrowserContext*>(profile));
   handler->OnShow(profile_, notification.id());
 }
 
+void NotificationPlatformBridgeBraveCustomNotification::ShowAndroidAdsCustomNotification(
+    Profile* profile,
+    brave_custom_notification::Notification& notification) {
+  GURL origin_url(notification.origin_url().GetOrigin());
+
+  JNIEnv* env = AttachCurrentThread();
+
+  base::android::ScopedJavaLocalRef<jstring> j_scope_url =
+      ConvertUTF8ToJavaString(env, origin_url.spec());
+
+  base::android::ScopedJavaLocalRef<jstring> j_notification_id =
+      ConvertUTF8ToJavaString(env, notification.id());
+  base::android::ScopedJavaLocalRef<jstring> j_origin =
+      ConvertUTF8ToJavaString(env, origin_url.spec());
+  base::android::ScopedJavaLocalRef<jstring> title =
+      ConvertUTF16ToJavaString(env, notification.title());
+  base::android::ScopedJavaLocalRef<jstring> body =
+      ConvertUTF16ToJavaString(env, notification.message());
+
+  ScopedJavaLocalRef<jintArray> vibration_pattern =
+      base::android::ToJavaIntArray(env, notification.vibration_pattern());
+
+  ScopedJavaLocalRef<jstring> j_profile_id =
+      ConvertUTF8ToJavaString(env, "");
+
+  /*
+  Java_NotificationPlatformBridge_displayNotification(
+      env, java_object_, j_notification_id, j_notification_type, j_origin,
+      j_scope_url, j_profile_id, profile->IsOffTheRecord(), title, body, image,
+      notification_icon, badge, vibration_pattern,
+      notification.timestamp().ToJavaTime(), notification.renotify(),
+      notification.silent(), actions);
+      */
+}
+
+void NotificationPlatformBridgeBraveCustomNotification::CloseAndroidAdsCustomNotification(
+    Profile* profile,
+    const std::string& notification_id) {
+  JNIEnv* env = AttachCurrentThread();
+
+  ScopedJavaLocalRef<jstring> j_notification_id =
+      ConvertUTF8ToJavaString(env, notification_id);
+
+  /*
+  Java_NotificationPlatformBridge_closeNotification(
+      env, java_object_, j_notification_id, j_scope_url,
+      has_queried_webapk_package, j_webapk_package);
+      */
+}
+
 void NotificationPlatformBridgeBraveCustomNotification::Close(
     Profile* profile,
     const std::string& notification_id) {
-    brave_custom_notification::MessagePopupView::ClosePopup();
+#if defined(OS_WIN) || defined(OS_MACOSX) || defined(OS_LINUX)
+  brave_custom_notification::MessagePopupView::ClosePopup();
+#elif defined(OS_ANDROID)
+  NotificationPlatformBridgeBraveCustomNotification::CloseAndroidAdsCustomNotification(profile, notification_id);
+#endif
 }
 

@@ -29,9 +29,6 @@ const char* const kBraveAdsUrlPrefix = "https://www.brave.com/ads/?";
 std::unique_ptr<brave_custom_notification::Notification> CreateAdNotification(
     const ads::AdNotificationInfo& info);
 
-std::unique_ptr<message_center::Notification> CreateMessageCenterAdNotification(
-    const ads::AdNotificationInfo& info);
-
 }  // namespace brave_ads
 
 #endif  // BRAVE_COMPONENTS_BRAVE_ADS_BROWSER_AD_NOTIFICATION_H_
