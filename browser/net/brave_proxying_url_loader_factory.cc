@@ -231,9 +231,12 @@ void BraveProxyingURLLoaderFactory::InProgressRequest::OnReceiveRedirect(
     const net::RedirectInfo& redirect_info,
     network::mojom::URLResponseHeadPtr head) {
   current_response_ = std::move(head);
+  BraveRedirectInfo extended_redirect_info;
+  extended_redirect_info.internal = false;
+  extended_redirect_info.redirect_info = redirect_info;
   HandleResponseOrRedirectHeaders(
       base::BindRepeating(&InProgressRequest::ContinueToBeforeRedirect,
-                          weak_factory_.GetWeakPtr(), redirect_info));
+                          weak_factory_.GetWeakPtr(), extended_redirect_info));
 }
 
 void BraveProxyingURLLoaderFactory::InProgressRequest::OnUploadProgress(
@@ -337,7 +340,10 @@ void BraveProxyingURLLoaderFactory::InProgressRequest::
   head->encoded_data_length = 0;
 
   current_response_ = std::move(head);
-  ContinueToBeforeRedirect(redirect_info, net::OK);
+  BraveRedirectInfo extended_redirect_info;
+  extended_redirect_info.internal = true;
+  extended_redirect_info.redirect_info = redirect_info;
+  ContinueToBeforeRedirect(extended_redirect_info, net::OK);
 }
 
 void BraveProxyingURLLoaderFactory::InProgressRequest::
@@ -530,7 +536,10 @@ void BraveProxyingURLLoaderFactory::InProgressRequest::
     proxied_client_receiver_.reset();
     target_loader_.reset();
 
-    ContinueToBeforeRedirect(redirect_info, net::OK);
+    BraveRedirectInfo extended_redirect_info;
+    extended_redirect_info.internal = true;
+    extended_redirect_info.redirect_info = redirect_info;
+    ContinueToBeforeRedirect(extended_redirect_info, net::OK);
     return;
   }
 
@@ -539,7 +548,7 @@ void BraveProxyingURLLoaderFactory::InProgressRequest::
 }
 
 void BraveProxyingURLLoaderFactory::InProgressRequest::ContinueToBeforeRedirect(
-    const net::RedirectInfo& redirect_info,
+    const BraveRedirectInfo& redirect_info,
     int error_code) {
   if (error_code != net::OK) {
     OnRequestError(network::URLLoaderCompletionStatus(error_code));
@@ -549,18 +558,24 @@ void BraveProxyingURLLoaderFactory::InProgressRequest::ContinueToBeforeRedirect(
   if (proxied_client_receiver_.is_bound())
     proxied_client_receiver_.Resume();
 
-  target_client_->OnReceiveRedirect(redirect_info,
+  if (!redirect_info.internal) {
+    LOG(ERROR) << "REDIRECT TO " << redirect_info.redirect_info.new_url.spec() << " "
+               << "FROM " << request_.url.spec();
+    ctx_->redirect_source = request_.url;
+  }
+
+  target_client_->OnReceiveRedirect(redirect_info.redirect_info,
                                     std::move(current_response_));
-  request_.url = redirect_info.new_url;
-  request_.method = redirect_info.new_method;
-  request_.site_for_cookies = redirect_info.new_site_for_cookies;
-  request_.referrer = GURL(redirect_info.new_referrer);
-  request_.referrer_policy = redirect_info.new_referrer_policy;
+  request_.url = redirect_info.redirect_info.new_url;
+  request_.method = redirect_info.redirect_info.new_method;
+  request_.site_for_cookies = redirect_info.redirect_info.new_site_for_cookies;
+  request_.referrer = GURL(redirect_info.redirect_info.new_referrer);
+  request_.referrer_policy = redirect_info.redirect_info.new_referrer_policy;
 
   if (request_.trusted_params) {
     request_.trusted_params->isolation_info =
         request_.trusted_params->isolation_info.CreateForRedirect(
-            url::Origin::Create(redirect_info.new_url));
+            url::Origin::Create(redirect_info.redirect_info.new_url));
   }
 
   // The request method can be changed to "GET". In this case we need to

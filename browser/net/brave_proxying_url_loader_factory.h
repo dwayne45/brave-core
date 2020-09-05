@@ -103,7 +103,13 @@ class BraveProxyingURLLoaderFactory
     void ContinueToSendHeaders(int error_code);
     void ContinueToStartRequest(int error_code);
     void ContinueToResponseStarted(int error_code);
-    void ContinueToBeforeRedirect(const net::RedirectInfo& redirect_info,
+
+    struct BraveRedirectInfo {
+      net::RedirectInfo redirect_info;
+      bool internal;
+    };
+
+    void ContinueToBeforeRedirect(const BraveRedirectInfo& redirect_info,
                                   int error_code);
     void HandleResponseOrRedirectHeaders(
         net::CompletionOnceCallback continuation);

@@ -59,6 +59,8 @@ struct BraveRequestInfo {
   GURL tab_url;
   GURL initiator_url;
 
+  GURL redirect_source;
+
   GURL referrer;
   net::URLRequest::ReferrerPolicy referrer_policy =
       net::URLRequest::ReferrerPolicy::

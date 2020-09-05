@@ -72,9 +72,13 @@ DECLARE_LAZY_MATCHER(tracker_appended_matcher,
 
 void ApplyPotentialQueryStringFilter(const GURL& initiator_url,
                                      const GURL& request_url,
+                                     const GURL& redirect_source,
                                      std::string* new_url_spec) {
   DCHECK(new_url_spec);
   SCOPED_UMA_HISTOGRAM_TIMER("Brave.SiteHacks.QueryFilter");
+
+  LOG(ERROR) << request_url.spec() << " <== " << initiator_url.spec()
+             << " (redirected from " << redirect_source << ")";
 
   // Same-site requests are exempted from the filter.
   if (net::registry_controlled_domains::SameDomainOrHost(
@@ -131,9 +135,10 @@ bool ApplyPotentialReferrerBlock(std::shared_ptr<BraveRequestInfo> ctx) {
 int OnBeforeURLRequest_SiteHacksWork(const ResponseCallback& next_callback,
                                      std::shared_ptr<BraveRequestInfo> ctx) {
   ApplyPotentialReferrerBlock(ctx);
+  // FIXME: skip Internal Redirects
   if (ctx->request_url.has_query() && ctx->initiator_url.is_valid()) {
     ApplyPotentialQueryStringFilter(ctx->initiator_url, ctx->request_url,
-                                    &ctx->new_url_spec);
+                                    ctx->redirect_source, &ctx->new_url_spec);
   }
   return net::OK;
 }
