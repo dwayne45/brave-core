@@ -101,6 +101,7 @@ void NotificationPlatformBridgeBraveCustomNotification::Display(
 #if defined(OS_WIN) || defined(OS_MACOSX) || defined(OS_LINUX)
   brave_custom_notification::MessagePopupView::Show(notification);
 #elif defined(OS_ANDROID)
+  LOG(INFO) << "albert brave showing notification! NotificationPlatformBridgeBraveCustomNotification::Display";
   ShowAndroidAdsCustomNotification(profile, notification);
 #endif
 
@@ -130,19 +131,16 @@ void NotificationPlatformBridgeBraveCustomNotification::ShowAndroidAdsCustomNoti
       title, body);
 }
 
-void NotificationPlatformBridgeBraveCustomNotification::CloseAndroidAdsCustomNotification(
-    Profile* profile,
-    const std::string& notification_id) {
+void NotificationPlatformBridgeBraveCustomNotification::
+    CloseAndroidAdsCustomNotification(
+        Profile* profile,
+        const std::string& notification_id) {
   JNIEnv* env = AttachCurrentThread();
 
   ScopedJavaLocalRef<jstring> j_notification_id =
       ConvertUTF8ToJavaString(env, notification_id);
 
-  /*
-  Java_NotificationPlatformBridge_closeNotification(
-      env, java_object_, j_notification_id, j_scope_url,
-      has_queried_webapk_package, j_webapk_package);
-      */
+  Java_BraveAdsCustomNotificationDialog_closeAdsCustomNotification(env, j_notification_id);
 }
 
 void NotificationPlatformBridgeBraveCustomNotification::Close(

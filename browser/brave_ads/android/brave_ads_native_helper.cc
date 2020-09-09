@@ -87,6 +87,28 @@ void JNI_BraveAdsNativeHelper_SetAdsEnabled(
   ads_service_->SetEnabled(true);
 }
 
+void JNI_BraveAdsNativeHelper_AdClicked(
+    JNIEnv* env,
+    const base::android::JavaParamRef<jobject>& j_profile_android) {
+  Profile* profile = ProfileAndroid::FromProfileAndroid(j_profile_android);
+  auto* ads_service_ = brave_ads::AdsServiceFactory::GetForProfile(profile);
+  if (!ads_service_) {
+    NOTREACHED();
+    return;
+  }
+}
+
+void JNI_BraveAdsNativeHelper_AdDismissed(
+    JNIEnv* env,
+    const base::android::JavaParamRef<jobject>& j_profile_android) {
+  Profile* profile = ProfileAndroid::FromProfileAndroid(j_profile_android);
+  auto* ads_service_ = brave_ads::AdsServiceFactory::GetForProfile(profile);
+  if (!ads_service_) {
+    NOTREACHED();
+    return;
+  }
+}
+
 }  // namespace android
 
 }  // namespace chrome

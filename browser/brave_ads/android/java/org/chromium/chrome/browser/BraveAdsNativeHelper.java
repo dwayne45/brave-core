@@ -18,4 +18,8 @@ public class BraveAdsNativeHelper {
     public static native void nativeSetAdsEnabled(Profile profile);
     public static native boolean nativeIsNewlySupportedLocale(Profile profile);
     public static native boolean nativeIsSupportedLocale(Profile profile);
+    public static native void nativeAdClicked(Profile profile);
+    // public static native void nativeAdClicked(Profile profile, String notificationId);
+    // public static native void nativeAdDismissed(Profile profile, String notificationId);
+    public static native void nativeAdDismissed(Profile profile);
 }

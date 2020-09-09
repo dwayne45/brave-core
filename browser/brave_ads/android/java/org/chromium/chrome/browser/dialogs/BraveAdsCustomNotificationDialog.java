@@ -14,14 +14,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import org.chromium.base.ContextUtils;
 import org.chromium.base.annotations.CalledByNative;
 import org.chromium.chrome.R;
+import org.chromium.chrome.browser.BraveActivity;
 import org.chromium.chrome.browser.BraveAdsNativeHelper;
 import org.chromium.chrome.browser.BraveFeatureList;
 import org.chromium.chrome.browser.BraveRewardsNativeWorker;
@@ -38,65 +42,63 @@ import org.chromium.chrome.browser.util.PackageUtils;
 import java.lang.System;
 
 public class BraveAdsCustomNotificationDialog {
+
+    static AlertDialog mAdsDialog;
+    static String mNotificationId;
+
     @CalledByNative
     private static void displayAdsCustomNotification(final String notificationId,
             final String origin, final String title, final String body) {
-      Log.i("albert", "Called display ads custom notification");
-      Toast.makeText(ContextUtils.getApplicationContext(), "title: " + title + " body: " + body, Toast.LENGTH_LONG);
-    }
+        Context context = ContextUtils.getApplicationContext();
+        AlertDialog.Builder b = new AlertDialog.Builder(context);
 
-    /*
-    public static void showNewUserDialog(Context context) {
-        AlertDialog alertDialog = new AlertDialog.Builder(context, R.style.BraveDialogTheme)
-        .setView(R.layout.brave_ads_new_user_dialog_layout)
-        .setPositiveButton(R.string.brave_ads_offer_positive, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        b.setView(inflater.inflate(R.layout.brave_ads_custom_notification, null));
+        mAdsDialog = b.create();
 
-                OnboardingPrefManager.getInstance().setOnboardingNotificationShown(false);
+        Window window = mAdsDialog.getWindow();
+        WindowManager.LayoutParams wlp = window.getAttributes();
 
-                neverShowOnboardingDialogAgain();
+        ((TextView) mAdsDialog.findViewById(R.id.brave_ads_custom_notification_header)).setText(title);
+        ((TextView) mAdsDialog.findViewById(R.id.brave_ads_custom_notification_body)).setText(body);
+        mAdsDialog.show();
 
-                BraveRewardsNativeWorker braveRewardsNativeWorker = BraveRewardsNativeWorker.getInstance();
-                braveRewardsNativeWorker.GetRewardsMainEnabled();
-                braveRewardsNativeWorker.CreateWallet();
+        wlp.gravity = Gravity.TOP;
+        wlp.dimAmount = 0.0f;
+        wlp.flags |= WindowManager.LayoutParams.FLAG_DIM_BEHIND;
 
-                // Enable ads
-                BraveAdsNativeHelper.nativeSetAdsEnabled(Profile.getLastUsedRegularProfile());
-            }
-        }).create();
-        alertDialog.show();
+        mAdsDialog.setCanceledOnTouchOutside(false);
+        mAdsDialog.setCancelable(false);
 
-        ImageView closeButton = alertDialog.findViewById(R.id.close_button);
+        window.setAttributes(wlp);
+        ImageView closeButton = mAdsDialog.findViewById(R.id.brave_ads_custom_notification_close_button);
+
+        mNotificationId = notificationId;
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                alertDialog.cancel();
+            public void onClick(View view) {
+                // mAdsDialog.hide();
+                mAdsDialog.hide();
+                BraveAdsNativeHelper.nativeAdDismissed(Profile.getLastUsedRegularProfile());
+                // BraveAdsNativeHelper.nativeAdDismissed(Profile.getLastUsedRegularProfile(), mNotificationId);
+            }
+        });
+
+        mAdsDialog.findViewById(R.id.brave_ads_custom_notification_popup).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                BraveActivity.getBraveActivity().openNewOrSelectExistingTab(origin);
+                mAdsDialog.hide();
+                BraveAdsNativeHelper.nativeAdClicked(Profile.getLastUsedRegularProfile());
+//                BraveAdsNativeHelper.nativeAdClicked(Profile.getLastUsedRegularProfile(), mNotificationId);
             }
         });
     }
 
-    public static void showExistingUserDialog(Context context) {
-        AlertDialog alertDialog = new AlertDialog.Builder(context, R.style.BraveDialogTheme)
-        .setView(R.layout.brave_ads_existing_user_dialog_layout)
-        .setPositiveButton(R.string.brave_ads_offer_positive, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Enable ads
-                neverShowOnboardingDialogAgain();
-
-                BraveAdsNativeHelper.nativeSetAdsEnabled(Profile.getLastUsedRegularProfile());
-            }
-        }).create();
-        alertDialog.show();
-
-        ImageView closeButton = alertDialog.findViewById(R.id.close_button);
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.cancel();
-            }
-        });
+    @CalledByNative
+    private static void closeAdsCustomNotification(final String notificationId) {
+        if (mNotificationId != null && mNotificationId.equals(notificationId) && mAdsDialog != null) {
+            mAdsDialog.hide();
+        }
     }
-    */
 }
