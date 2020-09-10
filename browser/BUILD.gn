@@ -242,6 +242,7 @@ source_set("browser_process") {
       ]
 
       deps += [
+        "//brave/vendor/bat-native-ads",
         "brave_ads/android:jni_headers",
       ]
     }

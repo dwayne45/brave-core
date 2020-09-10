@@ -26,10 +26,12 @@
             android:layout_weight="1" />
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_gravity="end"
-            android:src="@drawable/bat_ads_close_btn_16"
+            android:paddingTop="2dp"
+            android:paddingEnd="2dp"
+            android:src="@drawable/bat_ads_close_button"
             android:id="@+id/brave_ads_custom_notification_close_button"
             />
     </LinearLayout>

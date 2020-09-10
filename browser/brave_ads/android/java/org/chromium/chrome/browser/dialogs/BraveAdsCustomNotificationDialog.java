@@ -22,7 +22,6 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.chromium.base.ContextUtils;
 import org.chromium.base.annotations.CalledByNative;
 import org.chromium.chrome.R;
 import org.chromium.chrome.browser.BraveActivity;
@@ -49,19 +48,19 @@ public class BraveAdsCustomNotificationDialog {
     @CalledByNative
     private static void displayAdsCustomNotification(final String notificationId,
             final String origin, final String title, final String body) {
-        Context context = ContextUtils.getApplicationContext();
-        AlertDialog.Builder b = new AlertDialog.Builder(context);
+        if (mAdsDialog != null) {
+            mAdsDialog.dismiss();
+        }
+        AlertDialog.Builder b = new AlertDialog.Builder(BraveActivity.getBraveActivity());
 
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) BraveActivity.getBraveActivity().getLayoutInflater();
         b.setView(inflater.inflate(R.layout.brave_ads_custom_notification, null));
         mAdsDialog = b.create();
 
+        mAdsDialog.show();
+
         Window window = mAdsDialog.getWindow();
         WindowManager.LayoutParams wlp = window.getAttributes();
-
-        ((TextView) mAdsDialog.findViewById(R.id.brave_ads_custom_notification_header)).setText(title);
-        ((TextView) mAdsDialog.findViewById(R.id.brave_ads_custom_notification_body)).setText(body);
-        mAdsDialog.show();
 
         wlp.gravity = Gravity.TOP;
         wlp.dimAmount = 0.0f;
@@ -71,26 +70,30 @@ public class BraveAdsCustomNotificationDialog {
         mAdsDialog.setCancelable(false);
 
         window.setAttributes(wlp);
+
+        window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
+
         ImageView closeButton = mAdsDialog.findViewById(R.id.brave_ads_custom_notification_close_button);
+
+        ((TextView) mAdsDialog.findViewById(R.id.brave_ads_custom_notification_header)).setText(title);
+        ((TextView) mAdsDialog.findViewById(R.id.brave_ads_custom_notification_body)).setText(body);
 
         mNotificationId = notificationId;
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // mAdsDialog.hide();
-                mAdsDialog.hide();
-                BraveAdsNativeHelper.nativeAdDismissed(Profile.getLastUsedRegularProfile());
-                // BraveAdsNativeHelper.nativeAdDismissed(Profile.getLastUsedRegularProfile(), mNotificationId);
+                mAdsDialog.dismiss();
+                BraveAdsNativeHelper.nativeAdDismissed(Profile.getLastUsedRegularProfile(), mNotificationId);
             }
         });
 
         mAdsDialog.findViewById(R.id.brave_ads_custom_notification_popup).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BraveActivity.getBraveActivity().openNewOrSelectExistingTab(origin);
-                mAdsDialog.hide();
-                BraveAdsNativeHelper.nativeAdClicked(Profile.getLastUsedRegularProfile());
-//                BraveAdsNativeHelper.nativeAdClicked(Profile.getLastUsedRegularProfile(), mNotificationId);
+                // We don't take the user to the page in this class, native code handles opening a new tab for us.
+                mAdsDialog.dismiss();
+                BraveAdsNativeHelper.nativeAdClicked(Profile.getLastUsedRegularProfile(), mNotificationId);
             }
         });
     }
@@ -98,7 +101,7 @@ public class BraveAdsCustomNotificationDialog {
     @CalledByNative
     private static void closeAdsCustomNotification(final String notificationId) {
         if (mNotificationId != null && mNotificationId.equals(notificationId) && mAdsDialog != null) {
-            mAdsDialog.hide();
+            mAdsDialog.dismiss();
         }
     }
 }
