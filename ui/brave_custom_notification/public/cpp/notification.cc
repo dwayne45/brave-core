@@ -7,6 +7,7 @@
 
 #include <map>
 #include <memory>
+#include <utility>
 
 #include "base/logging.h"
 #include "brave/ui/brave_custom_notification/public/cpp/constants.h"

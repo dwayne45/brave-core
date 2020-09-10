@@ -6,6 +6,7 @@
 #include "brave/ui/brave_custom_notification/padded_button.h"
 
 #include <memory>
+#include <utility>
 
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/gfx/canvas.h"

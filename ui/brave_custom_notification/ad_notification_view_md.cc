@@ -4,10 +4,10 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "brave/ui/brave_custom_notification/ad_notification_view_md.h"
-#include "base/logging.h"
 
 #include <stddef.h>
 #include <memory>
+#include <utility>
 
 #include "base/i18n/case_conversion.h"
 #include "base/files/file_path.h"
@@ -179,7 +179,8 @@ class AdNotificationViewMD::AdNotificationViewMDPathGenerator
   gfx::Size preferred_size_;
 };
 
-void AdNotificationViewMD::CreateOrUpdateViews(const Notification& notification) {
+void AdNotificationViewMD::CreateOrUpdateViews(
+    const Notification& notification) {
   left_content_count_ = 0;
 
   CreateOrUpdateContextTitleView(notification);
@@ -214,7 +215,8 @@ AdNotificationViewMD::AdNotificationViewMD(const Notification& notification)
 
   AddChildView(ink_drop_container_);
 
-  control_buttons_view_ = std::make_unique<NotificationControlButtonsView>(this);
+  control_buttons_view_ =
+    std::make_unique<NotificationControlButtonsView>(this);
   control_buttons_view_->set_owned_by_client();
 
   // |header_row_| contains app_icon, app_name, control buttons, etc...
@@ -462,7 +464,8 @@ void AdNotificationViewMD::ToggleInlineSettings(const ui::Event& event) {
   SchedulePaint();
 }
 
-void AdNotificationViewMD::UpdateCornerRadius(int top_radius, int bottom_radius) {
+void AdNotificationViewMD::UpdateCornerRadius(
+    int top_radius, int bottom_radius) {
   NotificationView::UpdateCornerRadius(top_radius, bottom_radius);
   highlight_path_generator_->set_top_radius(top_radius);
   highlight_path_generator_->set_bottom_radius(bottom_radius);
@@ -515,7 +518,8 @@ std::unique_ptr<views::InkDrop> AdNotificationViewMD::CreateInkDrop() {
   return std::make_unique<NotificationInkDropImpl>(this, size());
 }
 
-std::unique_ptr<views::InkDropRipple> AdNotificationViewMD::CreateInkDropRipple()
+std::unique_ptr<views::InkDropRipple>
+    AdNotificationViewMD::CreateInkDropRipple()
     const {
   return std::make_unique<views::FloodFillInkDropRipple>(
       GetPreferredSize(), GetInkDropCenterBasedOnLastEvent(),

@@ -70,7 +70,8 @@ void NotificationControlButtonsView::ShowCloseButton(bool show) {
     close_button_->set_owned_by_client();
     close_button_->SetImage(
         views::Button::STATE_NORMAL,
-        ui::ResourceBundle::GetSharedInstance().GetImageNamed(IDR_BAT_ADS_CLOSE_BUTTON_16).AsImageSkia());
+        ui::ResourceBundle::GetSharedInstance().GetImageNamed(
+            IDR_BAT_ADS_CLOSE_BUTTON_16).AsImageSkia());
     close_button_->SetBackground(
         views::CreateSolidBackground(SK_ColorTRANSPARENT));
 
@@ -114,4 +115,4 @@ void NotificationControlButtonsView::ButtonPressed(views::Button* sender,
   }
 }
 
-}
+}  // namespace brave_custom_notification

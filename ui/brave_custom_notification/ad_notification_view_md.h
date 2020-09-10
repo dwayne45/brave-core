@@ -3,9 +3,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef UI_BRAVE_CUSTOM_NOTIFICATION_VIEWS_NOTIFICATION_VIEW_MD_H_
-#define UI_BRAVE_CUSTOM_NOTIFICATION_VIEWS_NOTIFICATION_VIEW_MD_H_
+#ifndef BRAVE_UI_BRAVE_CUSTOM_NOTIFICATION_AD_NOTIFICATION_VIEW_MD_H_
+#define BRAVE_UI_BRAVE_CUSTOM_NOTIFICATION_AD_NOTIFICATION_VIEW_MD_H_
 
+#include <memory>
 #include <vector>
 
 #include "base/gtest_prod_util.h"
@@ -127,6 +128,6 @@ class AdNotificationViewMD
   DISALLOW_COPY_AND_ASSIGN(AdNotificationViewMD);
 };
 
-}
+}  // namespace brave_custom_notification
 
-#endif
+#endif  // BRAVE_UI_BRAVE_CUSTOM_NOTIFICATION_AD_NOTIFICATION_VIEW_MD_H_

@@ -37,6 +37,6 @@ class NotificationBackgroundPainter
   DISALLOW_COPY_AND_ASSIGN(NotificationBackgroundPainter);
 };
 
-}
+}  // namespace brave_custom_notification
 
-#endif
+#endif  // BRAVE_UI_BRAVE_CUSTOM_NOTIFICATION_NOTIFICATION_BACKGROUND_PAINTER_H_

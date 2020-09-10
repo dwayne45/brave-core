@@ -5,6 +5,8 @@
 #ifndef BRAVE_UI_BRAVE_CUSTOM_NOTIFICATION_PADDED_BUTTON_H_
 #define BRAVE_UI_BRAVE_CUSTOM_NOTIFICATION_PADDED_BUTTON_H_
 
+#include <memory>
+
 #include "base/compiler_specific.h"
 #include "base/macros.h"
 #include "ui/views/animation/ink_drop.h"
@@ -22,7 +24,7 @@ namespace brave_custom_notification {
 // area (<http://crbug.com/168856>).
 class PaddedButton : public views::ImageButton {
  public:
-  PaddedButton(views::ButtonListener* listener);
+  explicit PaddedButton(views::ButtonListener* listener);
   ~PaddedButton() override = default;
 
   std::unique_ptr<views::InkDrop> CreateInkDrop() override;

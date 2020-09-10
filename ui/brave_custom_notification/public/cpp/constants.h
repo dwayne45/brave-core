@@ -2,9 +2,9 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
- 
-#ifndef UI_BRAVE_CUSTOM_NOTIFICATION_PUBLIC_CPP_CONSTANTS_H_
-#define UI_BRAVE_CUSTOM_NOTIFICATION_PUBLIC_CPP_CONSTANTS_H_
+
+#ifndef BRAVE_UI_BRAVE_CUSTOM_NOTIFICATION_PUBLIC_CPP_CONSTANTS_H_
+#define BRAVE_UI_BRAVE_CUSTOM_NOTIFICATION_PUBLIC_CPP_CONSTANTS_H_
 
 #include <stddef.h>
 
@@ -28,7 +28,8 @@ const int kControlButtonBorderSize = 6;
 
 // Colors.
 // Background of the card.
-constexpr SkColor kNotificationBackgroundColor = SkColorSetRGB(0xED, 0xF0, 0xF2);
+constexpr SkColor kNotificationBackgroundColor =
+  SkColorSetRGB(0xED, 0xF0, 0xF2);
 constexpr SkColor kDimTextColorMD = SkColorSetRGB(0x75, 0x75, 0x75);
 // The focus border.
 constexpr SkColor kFocusBorderColor = SK_ColorTRANSPARENT;
@@ -58,4 +59,4 @@ constexpr int kNotificationCornerRadius = 0;
 
 }  // namespace brave_custom_notification
 
-#endif  // UI_BRAVE_CUSTOM_NOTIFICATION_PUBLIC_CPP_CONSTANTS_H_
+#endif  // BRAVE_UI_BRAVE_CUSTOM_NOTIFICATION_PUBLIC_CPP_CONSTANTS_H_

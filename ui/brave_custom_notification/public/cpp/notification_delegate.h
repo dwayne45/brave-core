@@ -35,7 +35,8 @@ class NotificationObserver {
 
 // Ref counted version of NotificationObserver, required to satisfy
 // brave_custom_notification::Notification::delegate_.
-class NotificationDelegate : public NotificationObserver, public base::RefCountedThreadSafe<NotificationDelegate> {
+class NotificationDelegate : public NotificationObserver,
+  public base::RefCountedThreadSafe<NotificationDelegate> {
  protected:
   virtual ~NotificationDelegate() = default;
 
@@ -105,6 +106,6 @@ class HandleNotificationClickDelegate
   DISALLOW_COPY_AND_ASSIGN(HandleNotificationClickDelegate);
 };
 
-}  //  namespace brave_custom_notification
+}  // namespace brave_custom_notification
 
-#endif // BRAVE_UI_BRAVE_CUSTOM_NOTIFICATION_PUBLIC_CPP_NOTIFICATION_DELEGATE_H_
+#endif  // BRAVE_UI_BRAVE_CUSTOM_NOTIFICATION_PUBLIC_CPP_NOTIFICATION_DELEGATE_H_

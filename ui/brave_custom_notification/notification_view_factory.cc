@@ -13,7 +13,8 @@
 namespace brave_custom_notification {
 
 // static
-NotificationView* NotificationViewFactory::Create(const Notification& notification) {
+NotificationView* NotificationViewFactory::Create(
+    const Notification& notification) {
   NotificationView* notification_view = nullptr;
   if (!notification_view)
     notification_view = new AdNotificationViewMD(notification);

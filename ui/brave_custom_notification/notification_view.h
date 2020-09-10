@@ -3,10 +3,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef BRAVE_UI_BRAVE_CUSTOM_NOTIFICATION_VIEWS_MESSAGE_VIEW_H_
-#define BRAVE_UI_BRAVE_CUSTOM_NOTIFICATION_VIEWS_MESSAGE_VIEW_H_
+#ifndef BRAVE_UI_BRAVE_CUSTOM_NOTIFICATION_NOTIFICATION_VIEW_H_
+#define BRAVE_UI_BRAVE_CUSTOM_NOTIFICATION_NOTIFICATION_VIEW_H_
 
 #include <memory>
+#include <string>
 
 #include "base/macros.h"
 #include "base/observer_list.h"
@@ -34,7 +35,7 @@ namespace brave_custom_notification {
 class Notification;
 class NotificationControlButtonsView;
 
-class NotificationView 
+class NotificationView
     : public views::InkDropHostView,
       public views::SlideOutControllerDelegate,
       public views::FocusChangeListener {
@@ -59,14 +60,15 @@ class NotificationView
 
   virtual void UpdateCornerRadius(int top_radius, int bottom_radius);
 
-  // Invoked when the container view of NotificationView 
+  // Invoked when the container view of NotificationView
   // is starting the animation that possibly hides some part of
   // the NotificationView.
-  // During the animation, NotificationView should comply with the Z order in views.
+  // During the animation, NotificationView should comply with the
+  // Z order in views.
   virtual void OnContainerAnimationStarted();
   virtual void OnContainerAnimationEnded();
   void OnCloseButtonPressed();
-  
+
   void OnPaint(gfx::Canvas* canvas) override;
   void OnGestureEvent(ui::GestureEvent* event) override;
   void RemovedFromWidget() override;
@@ -141,6 +143,6 @@ class NotificationView
   DISALLOW_COPY_AND_ASSIGN(NotificationView);
 };
 
-}
+}  // namespace brave_custom_notification
 
-#endif
+#endif  // BRAVE_UI_BRAVE_CUSTOM_NOTIFICATION_NOTIFICATION_VIEW_H_

@@ -5,6 +5,11 @@
 
 #include "brave/ui/brave_custom_notification/message_popup_view.h"
 
+#include <map>
+#include <memory>
+#include <string>
+#include <utility>
+
 #include "brave/ui/brave_custom_notification/notification_view.h"
 #include "brave/ui/brave_custom_notification/notification_view_factory.h"
 #include "brave/ui/brave_custom_notification/public/cpp/constants.h"
@@ -45,14 +50,17 @@ void MessagePopupView::Show(const Notification& notification) {
 // static
 void MessagePopupView::Clicked(const std::string& notification_id) {
   MessagePopupView* message_popup_view = g_notifications_[notification_id];
-  message_popup_view->notification_.delegate()->Click(base::nullopt, base::nullopt);
+  message_popup_view->notification_.delegate()->Click(
+      base::nullopt, base::nullopt);
   message_popup_view->Close();
   g_notifications_.erase(notification_id);
 }
 
 // static
 void MessagePopupView::ClosePopup() {
-  for (auto iter = g_notifications_.begin(); iter != g_notifications_.end(); ++iter) {
+  for (auto iter = g_notifications_.begin();
+      iter != g_notifications_.end();
+      ++iter) {
     MessagePopupView* message_popup_view = g_notifications_[iter->first];
     message_popup_view->notification_.delegate()->Close(true);
     message_popup_view->Close();
@@ -66,7 +74,11 @@ MessagePopupView::MessagePopupView(const Notification& notification) :
   views::Widget::InitParams params(views::Widget::InitParams::TYPE_POPUP);
   params.type = views::Widget::InitParams::TYPE_WINDOW_FRAMELESS;
   params.z_order = ui::ZOrderLevel::kFloatingWindow;
-  params.bounds = { kPopupX, kPopupY, kPopupBaseWidth, kPopupBaseHeight + GetBodyHeight(notification.message())};
+  params.bounds = {
+    kPopupX,
+    kPopupY,
+    kPopupBaseWidth,
+    kPopupBaseHeight + GetBodyHeight(notification.message())};
 #if defined(OS_LINUX) && !defined(OS_CHROMEOS)
   // Make the widget explicitly activatable as TYPE_POPUP is not activatable by
   // default but we need focus for the inline reply textarea.
@@ -91,7 +103,8 @@ MessagePopupView::MessagePopupView(const Notification& notification) :
   popup_window_->Init(std::move(params));
   popup_window_->ShowInactive();
 
-  NotificationView* message_view_ = NotificationViewFactory::Create(notification);
+  NotificationView* message_view_ =
+    NotificationViewFactory::Create(notification);
   popup_window_->SetContentsView(message_view_);
   set_notify_enter_exit_on_child(true);
 }

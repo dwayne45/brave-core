@@ -3,8 +3,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef UI_BRAVE_CUSTOM_NOTIFICATION_MESSAGE_VIEW_FACTORY_H_
-#define UI_BRAVE_CUSTOM_NOTIFICATION_MESSAGE_VIEW_FACTORY_H_
+#ifndef BRAVE_UI_BRAVE_CUSTOM_NOTIFICATION_NOTIFICATION_VIEW_FACTORY_H_
+#define BRAVE_UI_BRAVE_CUSTOM_NOTIFICATION_NOTIFICATION_VIEW_FACTORY_H_
 
 #include <memory>
 #include <string>
@@ -27,4 +27,4 @@ class NotificationViewFactory {
 
 }  // namespace brave_custom_notification
 
-#endif  // UI_BRAVE_CUSTOM_NOTIFICATION_MESSAGE_VIEW_FACTORY_H_
+#endif  // BRAVE_UI_BRAVE_CUSTOM_NOTIFICATION_NOTIFICATION_VIEW_FACTORY_H_

@@ -65,9 +65,9 @@ NotificationHelperWin::NotificationHelperWin() = default;
 NotificationHelperWin::~NotificationHelperWin() = default;
 
 bool NotificationHelperWin::ShouldShowNotifications() {
-  if (IsFullScreenMode()) {	
-    LOG(WARNING) << "Notification not made: Full screen mode";	
-    return false;	
+  if (IsFullScreenMode()) {
+    LOG(WARNING) << "Notification not made: Full screen mode";
+    return false;
   }
   return true;
 }

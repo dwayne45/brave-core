@@ -8,7 +8,9 @@
 
 #include <stddef.h>
 
+#include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "base/memory/ref_counted.h"
@@ -127,11 +129,6 @@ class BRAVE_CUSTOM_NOTIFICATION_PUBLIC_EXPORT RichNotificationData {
   // For system notification, ash::CreateSystemNotification with
   // SystemNotificationWarningLevel should be used.
   SkColor accent_color = SK_ColorTRANSPARENT;
-
-  // Controls whether a settings button should appear on the notification. See
-  // enum definition. TODO(estade): turn this into a boolean. See
-  // crbug.com/780342
-  // SettingsButtonHandler settings_button_handler = SettingsButtonHandler::NONE;
 
   // Controls whether a snooze button should appear on the notification.
   bool should_show_snooze_button = false;

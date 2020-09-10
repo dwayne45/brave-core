@@ -72,6 +72,6 @@ class NotificationHeaderView : public views::Button {
   DISALLOW_COPY_AND_ASSIGN(NotificationHeaderView);
 };
 
-}
+}  // namespace brave_custom_notification
 
-#endif
+#endif  // BRAVE_UI_BRAVE_CUSTOM_NOTIFICATION_NOTIFICATION_HEADER_VIEW_H_

@@ -6,6 +6,8 @@
 #ifndef BRAVE_BROWSER_NOTIFICATIONS_NOTIFICATION_PLATFORM_BRIDGE_BRAVE_CUSTOM_NOTIFICATION_H_
 #define BRAVE_BROWSER_NOTIFICATIONS_NOTIFICATION_PLATFORM_BRIDGE_BRAVE_CUSTOM_NOTIFICATION_H_
 
+#include <string>
+
 #include "base/macros.h"
 #include "brave/components/brave_ads/browser/ads_notification_handler.h"
 #include "brave/ui/brave_custom_notification/public/cpp/notification.h"
@@ -35,4 +37,4 @@ class NotificationPlatformBridgeBraveCustomNotification {
   DISALLOW_COPY_AND_ASSIGN(NotificationPlatformBridgeBraveCustomNotification);
 };
 
-#endif
+#endif  // BRAVE_BROWSER_NOTIFICATIONS_NOTIFICATION_PLATFORM_BRIDGE_BRAVE_CUSTOM_NOTIFICATION_H_

@@ -5,6 +5,8 @@
 
 #include "brave/ui/brave_custom_notification/notification_view.h"
 
+#include <algorithm>
+
 #include "base/strings/utf_string_conversions.h"
 #include "brave/ui/brave_custom_notification/message_popup_view.h"
 #include "brave/ui/brave_custom_notification/notification_background_painter.h"
@@ -65,7 +67,9 @@ class NotificationView::HighlightPathGenerator
   DISALLOW_COPY_AND_ASSIGN(HighlightPathGenerator);
 };
 
-NotificationView::NotificationView(const Notification& notification) : notification_id_(notification.id()), slide_out_controller_(this, this) {
+NotificationView::NotificationView(const Notification& notification) :
+    notification_id_(notification.id()),
+    slide_out_controller_(this, this) {
   SetFocusBehavior(FocusBehavior::ALWAYS);
   views::HighlightPathGenerator::Install(
       this, std::make_unique<HighlightPathGenerator>());
@@ -80,7 +84,9 @@ NotificationView::NotificationView(const Notification& notification) : notificat
 
   // If Aero is enabled, set shadow border.
   if (ShouldShowAeroShadowBorder()) {
-    const auto& shadow = gfx::ShadowDetails::Get(kWindowsShadowElevation, kWindowsShadowRadius);
+    const auto& shadow = gfx::ShadowDetails::Get(
+        kWindowsShadowElevation,
+        kWindowsShadowRadius);
     gfx::Insets ninebox_insets = gfx::ShadowValue::GetBlurRegion(shadow.values);
     SetBorder(views::CreateBorderPainter(
         views::Painter::CreateImagePainter(shadow.ninebox_image,
@@ -93,7 +99,8 @@ NotificationView::~NotificationView() {
   RemovedFromWidget();
 }
 
-void NotificationView::UpdateWithNotification(const Notification& notification) {
+void NotificationView::UpdateWithNotification(
+    const Notification& notification) {
   slide_out_controller_.set_slide_mode(CalculateSlideMode());
 }
 
@@ -169,7 +176,6 @@ void NotificationView::OnGestureEvent(ui::GestureEvent* event) {
     }
     case ui::ET_GESTURE_TAP: {
       SetDrawBackgroundAsActive(false);
-      // TODO: Handle clicks
       event->SetHandled();
       return;
     }
@@ -237,9 +243,11 @@ void NotificationView::OnSlideOut() {
     observer.OnSlideOut(notification_id_);
 }
 
-void NotificationView::OnWillChangeFocus(views::View* before, views::View* now) {}
+void NotificationView::OnWillChangeFocus(
+    views::View* before, views::View* now) {}
 
-void NotificationView::OnDidChangeFocus(views::View* before, views::View* now) {
+void NotificationView::OnDidChangeFocus(
+    views::View* before, views::View* now) {
   if (Contains(before) || Contains(now) ||
       (GetControlButtonsView() && (GetControlButtonsView()->Contains(before) ||
                                    GetControlButtonsView()->Contains(now)))) {
@@ -247,7 +255,8 @@ void NotificationView::OnDidChangeFocus(views::View* before, views::View* now) {
   }
 }
 
-views::SlideOutController::SlideMode NotificationView::CalculateSlideMode() const {
+views::SlideOutController::SlideMode NotificationView::CalculateSlideMode()
+  const {
   if (disable_slide_)
     return views::SlideOutController::SlideMode::kNone;
 
@@ -291,4 +300,4 @@ void NotificationView::SetDrawBackgroundAsActive(bool active) {
   SchedulePaint();
 }
 
-}
+}  // namespace brave_custom_notification

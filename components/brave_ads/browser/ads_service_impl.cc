@@ -2019,9 +2019,12 @@ std::string AdsServiceImpl::LoadDataResourceAndDecompressIfNeeded(
 void AdsServiceImpl::ShowNotification(
     const std::unique_ptr<ads::AdNotificationInfo> info) {
   // Call NotificationPlatformBridgeBraveCustomNotification
-  std::unique_ptr<brave_custom_notification::Notification> notification = CreateAdNotification(*info);
-  std::unique_ptr<NotificationPlatformBridgeBraveCustomNotification> platform_bridge =
-    std::make_unique<NotificationPlatformBridgeBraveCustomNotification>(profile_);
+  std::unique_ptr<brave_custom_notification::Notification> notification =
+      CreateAdNotification(*info);
+  std::unique_ptr<NotificationPlatformBridgeBraveCustomNotification>
+    platform_bridge = std::make_unique<
+      NotificationPlatformBridgeBraveCustomNotification
+    >(profile_);
   platform_bridge->Display(profile_, *notification);
   StartNotificationTimeoutTimer(info->uuid);
 }
@@ -2062,10 +2065,11 @@ bool AdsServiceImpl::ShouldShowNotifications() {
 
 void AdsServiceImpl::CloseNotification(
     const std::string& uuid) {
-#if defined(OS_WIN) || defined(OS_MACOSX) || defined(OS_LINUX) || defined(OS_ANDROID)
-  std::unique_ptr<NotificationPlatformBridgeBraveCustomNotification> platform_bridge = std::make_unique<NotificationPlatformBridgeBraveCustomNotification>(profile_);
+  std::unique_ptr<NotificationPlatformBridgeBraveCustomNotification>
+    platform_bridge = std::make_unique<
+      NotificationPlatformBridgeBraveCustomNotification
+    >(profile_);
   platform_bridge->Close(profile_, uuid);
-#endif
 }
 
 void AdsServiceImpl::UrlRequest(

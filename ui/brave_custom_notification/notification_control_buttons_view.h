@@ -3,8 +3,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef UI_BRAVE_CUSTOM_NOTIFICATION_NOTIFICATION_CONTROL_BUTTONS_VIEW_H_
-#define UI_BRAVE_CUSTOM_NOTIFICATION_NOTIFICATION_CONTROL_BUTTONS_VIEW_H_
+#ifndef BRAVE_UI_BRAVE_CUSTOM_NOTIFICATION_NOTIFICATION_CONTROL_BUTTONS_VIEW_H_
+#define BRAVE_UI_BRAVE_CUSTOM_NOTIFICATION_NOTIFICATION_CONTROL_BUTTONS_VIEW_H_
+
+#include <memory>
 
 #include "base/macros.h"
 #include "third_party/skia/include/core/SkColor.h"
@@ -67,4 +69,4 @@ class NotificationControlButtonsView
 
 }  // namespace brave_custom_notification
 
-#endif  // UI_BRAVE_CUSTOM_NOTIFICATION_NOTIFICATION_CONTROL_BUTTONS_VIEW_H_
+#endif  // BRAVE_UI_BRAVE_CUSTOM_NOTIFICATION_NOTIFICATION_CONTROL_BUTTONS_VIEW_H_
