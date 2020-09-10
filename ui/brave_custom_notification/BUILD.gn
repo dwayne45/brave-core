@@ -19,8 +19,10 @@ source_set("brave_custom_notification") {
     ]
 
     deps += [
-      "//brave/ui/brave_custom_notification/public/cpp" ,
+      "//brave/app/theme:brave_theme_resources",
+      "//brave/app/theme:brave_unscaled_resources",
       "//brave/app/vector_icons",
+      "//brave/ui/brave_custom_notification/public/cpp" ,
       "//base:i18n",
       "//base/third_party/dynamic_annotations",
       "//components/url_formatter",

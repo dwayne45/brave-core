@@ -76,17 +76,10 @@ class PassThroughDelegate
 
 NotificationPlatformBridgeBraveCustomNotification::
     NotificationPlatformBridgeBraveCustomNotification(Profile* profile)
-    : profile_(profile) {
-      /*
-  java_object_.Reset(Java_BraveAdsCustomNotificationDialog_create(
-      AttachCurrentThread(), reinterpret_cast<intptr_t>(this)));
-      */
-}
+    : profile_(profile) {}
 
 NotificationPlatformBridgeBraveCustomNotification::
-    ~NotificationPlatformBridgeBraveCustomNotification() {
-//  Java_BraveAdsCustomNotificationDialog_destroy(AttachCurrentThread(), java_object_);
-}
+    ~NotificationPlatformBridgeBraveCustomNotification() {}
 
 void NotificationPlatformBridgeBraveCustomNotification::Display(
     Profile* profile,
@@ -109,6 +102,7 @@ void NotificationPlatformBridgeBraveCustomNotification::Display(
   handler->OnShow(profile_, notification.id());
 }
 
+#if defined(OS_ANDROID)
 void NotificationPlatformBridgeBraveCustomNotification::ShowAndroidAdsCustomNotification(
     Profile* profile,
     brave_custom_notification::Notification& notification) {
@@ -127,7 +121,6 @@ void NotificationPlatformBridgeBraveCustomNotification::ShowAndroidAdsCustomNoti
 
   Java_BraveAdsCustomNotificationDialog_displayAdsCustomNotification(
       env, j_notification_id, j_origin,
-      // env, java_object_, j_notification_id, j_origin,
       title, body);
 }
 
@@ -142,6 +135,7 @@ void NotificationPlatformBridgeBraveCustomNotification::
 
   Java_BraveAdsCustomNotificationDialog_closeAdsCustomNotification(env, j_notification_id);
 }
+#endif
 
 void NotificationPlatformBridgeBraveCustomNotification::Close(
     Profile* profile,

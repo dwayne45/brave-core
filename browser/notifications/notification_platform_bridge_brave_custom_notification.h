@@ -31,7 +31,6 @@ class NotificationPlatformBridgeBraveCustomNotification {
 
  private:
   Profile* profile_;
-  base::android::ScopedJavaGlobalRef<jobject> java_object_;
 
   DISALLOW_COPY_AND_ASSIGN(NotificationPlatformBridgeBraveCustomNotification);
 };
