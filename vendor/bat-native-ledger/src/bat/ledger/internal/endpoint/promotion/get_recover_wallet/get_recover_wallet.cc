@@ -53,7 +53,8 @@ type::Result GetRecoverWallet::CheckStatusCode(const int status_code) {
 
 type::Result GetRecoverWallet::ParseBody(
     const std::string& body,
-    std::string* payment_id) {
+    std::string* payment_id,
+    bool* old_wallet) {
   DCHECK(payment_id);
 
   base::Optional<base::Value> value = base::JSONReader::Read(body);
@@ -74,6 +75,15 @@ type::Result GetRecoverWallet::ParseBody(
     return type::Result::LEDGER_ERROR;
   }
 
+
+  const auto* wallet_name =
+      dictionary->FindStringPath("walletProvider.name");
+  if (!wallet_name) {
+    BLOG(0, "Wallet name is missing");
+    return type::Result::LEDGER_ERROR;
+  }
+
+  *old_wallet = *wallet_name == "uphold";
   *payment_id = *payment_id_string;
   return type::Result::LEDGER_OK;
 }
@@ -97,15 +107,16 @@ void GetRecoverWallet::OnRequest(
   ledger::LogUrlResponse(__func__, response);
 
   std::string payment_id;
+  bool old_wallet = false;
   type::Result result = CheckStatusCode(response.status_code);
 
   if (result != type::Result::LEDGER_OK) {
-    callback(result, payment_id);
+    callback(result, payment_id, old_wallet);
     return;
   }
 
-  result = ParseBody(response.body, &payment_id);
-  callback(result, payment_id);
+  result = ParseBody(response.body, &payment_id, &old_wallet);
+  callback(result, payment_id, old_wallet);
 }
 
 }  // namespace promotion
