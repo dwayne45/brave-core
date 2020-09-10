@@ -20,12 +20,6 @@ import {
   CloseStrokeIcon
 } from 'brave-ui/components/icons'
 
-import {
-  deleteMostVisitedTile,
-  generateGridSiteFavicon,
-  customLinksEnabled
-} from '../../api/topSites'
-
 // Types
 import * as newTabActions from '../../actions/new_tab_actions'
 import * as gridSitesActions from '../../actions/grid_sites_actions'
@@ -33,16 +27,22 @@ import * as gridSitesActions from '../../actions/grid_sites_actions'
 interface Props {
   actions: typeof newTabActions & typeof gridSitesActions
   siteData: NewTab.Site
+  disabled: boolean
+}
+
+function generateGridSiteFavicon (site: NewTab.Site): string {
+  if (site.favicon === '')
+    return `chrome://favicon/size/64@1x/${site.url}`
+  return site.favicon
 }
 
 class TopSite extends React.PureComponent<Props, {}> {
   onIgnoredTopSite (site: NewTab.Site) {
-    deleteMostVisitedTile(site.url)
-    this.props.actions.showTilesRemovedNotice(true)
+    this.props.actions.tileRemoved(site.url)
   }
 
   render () {
-    const { siteData } = this.props
+    const { siteData, disabled } = this.props
 
     return (
       <Tile
@@ -50,7 +50,7 @@ class TopSite extends React.PureComponent<Props, {}> {
         tabIndex={0}
         style={{
           // Visually inform users that dragging a site is not allowed.
-          cursor: customLinksEnabled() ? 'grab' : 'not-allowed'
+          cursor: disabled ? 'grab' : 'not-allowed'
         }}
       >
         <TileActionsContainer>

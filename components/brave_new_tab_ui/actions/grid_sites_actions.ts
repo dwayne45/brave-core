@@ -11,6 +11,15 @@ export const tilesUpdated = (gridSites: NewTab.Site[]) => {
   return action(types.GRID_SITES_DATA_UPDATED, { gridSites })
 }
 
+export const tileRemoved = (url: string) => {
+  return action(types.GRID_SITES_REMOVE, { url })
+}
+
+export const tilesReordered = (gridSites: NewTab.Site[],
+    old_pos: number, new_pos: number) => {
+  return action(types.GRID_SITES_REORDER, { gridSites, old_pos, new_pos })
+}
+
 export const showTilesRemovedNotice = (shouldShow: boolean) => {
   return action(types.GRID_SITES_SHOW_SITE_REMOVED_NOTIFICATION, { shouldShow })
 }

@@ -923,6 +923,7 @@ class NewTabPage extends React.Component<Props, State> {
               <Page.GridItemTopSites>
                 <TopSitesGrid
                   actions={actions}
+                  customLinksEnabled={customLinksEnabled()}
                   widgetTitle={getLocale('topSitesTitle')}
                   gridSites={gridSitesData.gridSites}
                   menuPosition={'right'}

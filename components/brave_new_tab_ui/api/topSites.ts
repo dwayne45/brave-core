@@ -18,7 +18,7 @@ export function deleteMostVisitedTile (url: string): void {
   chrome.send('deleteMostVisitedTile', [url])
 }
 
-export function reorderMostVisitedTile (url: string, new_pos: any): void {
+export function reorderMostVisitedTile (url: string, new_pos: number): void {
   chrome.send('reorderMostVisitedTile', [url, new_pos])
 }
 
@@ -44,18 +44,3 @@ export function customLinksEnabled (): boolean {
 export function isVisible (): boolean {
   return is_visible
 }
-
-export function generateGridSiteFavicon (site: NewTab.Site): string {
-  if (site.favicon === '')
-    return `chrome://favicon/size/64@1x/${site.url}`
-  return site.favicon
-}
-
-
-/*
-
-TODOS:
-2. Wire up the top sites visible to Chromium one & deprecate pref
-  c. when reading value
-3. Fix the hover style; only should show an X in the top right. Nothing else.
-*/

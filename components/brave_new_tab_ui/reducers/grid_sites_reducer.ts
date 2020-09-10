@@ -12,6 +12,13 @@ import { types } from '../constants/grid_sites_types'
 // API
 import * as gridSitesState from '../state/gridSitesState'
 import * as storage from '../storage/grid_sites_storage'
+import {
+  deleteMostVisitedTile,
+  reorderMostVisitedTile
+} from '../api/topSites'
+
+// Utils
+import arrayMove from 'array-move'
 
 const initialState = storage.load()
 
@@ -29,6 +36,27 @@ export const gridSitesReducer: Reducer<NewTab.GridSitesState | undefined> = (
   switch (action.type) {
     case types.GRID_SITES_DATA_UPDATED: {
       state = gridSitesState.tilesUpdated(state, payload.gridSites)
+      break
+    }
+
+    case types.GRID_SITES_REMOVE: {
+      const { url } = payload
+      deleteMostVisitedTile(url)
+      state = gridSitesState.showTilesRemovedNotice(state, true)
+      break
+    }
+
+    case types.GRID_SITES_REORDER: {
+      // Change the order in Chromium
+      const { gridSites, old_pos, new_pos } = payload
+      reorderMostVisitedTile(gridSites[old_pos].url, new_pos)
+      // Change the order that user sees. Chromium will overwrite this
+      // when `MostVisitedInfoChanged` is called- but changing BEFORE that
+      // avoids a flicker for the user where (for a second or so), tiles would
+      // have the wrong order.
+      const reorderedGridSites =
+          arrayMove(gridSites, old_pos, new_pos) as NewTab.Site[]
+      state = gridSitesState.tilesUpdated(state, reorderedGridSites)
       break
     }
 
